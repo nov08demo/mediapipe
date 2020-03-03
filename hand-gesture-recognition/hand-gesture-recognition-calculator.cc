@@ -2,6 +2,18 @@
 #include "mediapipe/framework/calculator_framework.h"
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/formats/rect.pb.h"
+#include <iostream>
+#include <Python/Python.h> 
+
+#include <string>
+#include <fstream>
+#include <streambuf>
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono> 
+#include <unistd.h>
+#include <fstream>
+
+
 
 namespace mediapipe
 {
@@ -20,6 +32,36 @@ constexpr char recognizedHandGestureTag[] = "RECOGNIZED_HAND_GESTURE";
 //   input_stream: "NORM_LANDMARKS:scaled_landmarks"
 //   input_stream: "NORM_RECT:hand_rect_for_next_frame"
 // }
+
+void pyRun(){
+    char filename[] = "socketConnection.py";
+	FILE* fp;
+
+	Py_Initialize();
+
+    // std::ifstream t("file.txt");
+    // std::stringstream buffer;
+    // buffer << t.rdbuf();
+    // char fileContent[] = buffer.str();
+    // LOG(INFO) << fileContent;
+	// fp = fopen(filename, "r");
+	// PyRun_SimpleFile(fp, filename);
+    PyRun_SimpleString("import socketio");
+    PyRun_SimpleString("import requests");
+    PyRun_SimpleString("import time");
+
+    PyRun_SimpleString("sio = socketio.Client()");
+    PyRun_SimpleString("sio.connect('http://summerdevelopment-env-dev008.us-east-1.elasticbeanstalk.com/')");
+    PyRun_SimpleString("@sio.on('connect')\n"
+                        "def on_connect():\n\t"
+                        "print('connected to the brain')\n");
+    PyRun_SimpleString("sio.emit('edge.startEdge')");
+    PyRun_SimpleString("time.sleep(0.2)");
+    PyRun_SimpleString("sio.disconnect()");
+	Py_Finalize();
+    
+}
+
 class HandGestureRecognitionCalculator : public CalculatorBase
 {
 public:
@@ -128,63 +170,100 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
     {
         fourthFingerIsOpen = true;
     }
-
+    std::ofstream myfile;
     // Hand gesture recognition
     if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("FIVE");
-         LOG(INFO) << "FIVE";
-    }
+        LOG(INFO) << "FIVE";
+        
+        myfile.open ("example.csv");
+        myfile << "five";
+        myfile.close();
+        
+        //usleep(0.2);
+        }
     else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("FOUR");
         LOG(INFO) << "FOUR";
+        myfile.open ("example.csv");
+        myfile << "four";
+        myfile.close();
     }
     else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("THREE");
         LOG(INFO) << "THREE";
+        myfile.open ("example.csv");
+        myfile << "three";
+        myfile.close();
     }
     else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("TWO");
         LOG(INFO) << "TWO";
+        myfile.open ("example.csv");
+        myfile << "two";
+        myfile.close();
     }
     else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("ONE");
         LOG(INFO) << "ONE";
+        myfile.open ("example.csv");
+        myfile << "one";
+        myfile.close();
     }
     else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("YEAH");
         LOG(INFO) << "YEAH";
+        myfile.open ("example.csv");
+        myfile << "yeah";
+        myfile.close();
     }
     else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("ROCK");
         LOG(INFO) << "ROCK";
+        myfile.open ("example.csv");
+        myfile << "rock";
+        myfile.close();
     }
     else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("SPIDERMAN");
         LOG(INFO) << "SPIDERMAN";
+        myfile.open ("example.csv");
+        myfile << "spiderman";
+        myfile.close();
     }
     else if (!thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
     {
         recognized_hand_gesture = new std::string("FIST");
         LOG(INFO) << "FIST";
+        myfile.open ("example.csv");
+        myfile << "fist";
+        myfile.close();
     }
     else if (!firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && this->isThumbNearFirstFinger(landmarkList.landmark(4), landmarkList.landmark(8)))
     {
         recognized_hand_gesture = new std::string("OK");
         LOG(INFO) << "OK";
+        myfile.open ("example.csv");
+        myfile << "ok";
+        myfile.close();
     }
     else
     {
         recognized_hand_gesture = new std::string("___");
-        LOG(INFO) << "Finger States: " << thumbIsOpen << firstFingerIsOpen << secondFingerIsOpen << thirdFingerIsOpen << fourthFingerIsOpen;       
+        LOG(INFO) << "Finger States: " << thumbIsOpen << firstFingerIsOpen << secondFingerIsOpen << thirdFingerIsOpen << fourthFingerIsOpen; 
+        myfile.open ("example.csv");
+        myfile << "random sequence";
+        myfile.close();      
     }
+    
     // LOG(INFO) << recognized_hand_gesture;
 
     cc->Outputs()

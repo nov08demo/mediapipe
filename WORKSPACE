@@ -324,3 +324,17 @@ http_archive(
     build_file = "@//third_party:google_toolbox_for_mac.BUILD",
 )
 
+# python deps
+
+new_local_repository(
+    name = "python",
+    path = "/usr/lib/python2.7/config",
+    build_file_content = """
+cc_library(
+    name = "python-lib",
+    srcs= ["libpython2.7.dylib"],
+    visibility = ["//visibility:public"]
+)
+    """
+)
+

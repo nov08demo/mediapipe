@@ -8,6 +8,8 @@ cc_library(
         "//mediapipe/framework/port:status",
         "//mediapipe/framework/formats:rect_cc_proto",
         "//mediapipe/framework/port:ret_check",
+        "@python//:python-lib"
     ],
+
     alwayslink = 1,
 )
