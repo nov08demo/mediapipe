@@ -117,6 +117,8 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
     const auto rect = &(cc->Inputs().Tag(normRectTag).Get<NormalizedRect>());
     float width = rect->width();
     float height = rect->height();
+    float minBoxIndex = 0.0225;
+    float boxArea = width * height;
 
     if (width < 0.01 || height < 0.01)
     {
@@ -140,6 +142,8 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
     bool thirdFingerIsOpen = false;
     bool fourthFingerIsOpen = false;
     //
+    //hand size (box area) 
+    bool handInRange = false;
 
     float pseudoFixKeyPoint = landmarkList.landmark(2).x();
     if (landmarkList.landmark(3).x() < pseudoFixKeyPoint && landmarkList.landmark(4).x() < pseudoFixKeyPoint)
@@ -170,9 +174,12 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
     {
         fourthFingerIsOpen = true;
     }
+    if(boxArea > minBoxIndex) {
+        handInRange = true;
+    }
     std::ofstream myfile;
     // Hand gesture recognition
-    if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen)
+    if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("FIVE");
         LOG(INFO) << "FIVE";
@@ -183,7 +190,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         
         //usleep(0.2);
         }
-    else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen)
+    else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("FOUR");
         LOG(INFO) << "FOUR";
@@ -191,7 +198,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "four";
         myfile.close();
     }
-    else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
+    else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("THREE");
         LOG(INFO) << "THREE";
@@ -199,7 +206,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "three";
         myfile.close();
     }
-    else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
+    else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("TWO");
         LOG(INFO) << "TWO";
@@ -207,7 +214,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "two";
         myfile.close();
     }
-    else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
+    else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("ONE");
         LOG(INFO) << "ONE";
@@ -215,7 +222,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "one";
         myfile.close();
     }
-    else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
+    else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("YEAH");
         LOG(INFO) << "YEAH";
@@ -223,7 +230,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "yeah";
         myfile.close();
     }
-    else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen)
+    else if (!thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("ROCK");
         LOG(INFO) << "ROCK";
@@ -231,7 +238,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "rock";
         myfile.close();
     }
-    else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen)
+    else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("SPIDERMAN");
         LOG(INFO) << "SPIDERMAN";
@@ -239,7 +246,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "spiderman";
         myfile.close();
     }
-    else if (!thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen)
+    else if (!thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen && handInRange)
     {
         recognized_hand_gesture = new std::string("FIST");
         LOG(INFO) << "FIST";
@@ -247,7 +254,7 @@ REGISTER_CALCULATOR(HandGestureRecognitionCalculator);
         myfile << "fist";
         myfile.close();
     }
-    else if (!firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && this->isThumbNearFirstFinger(landmarkList.landmark(4), landmarkList.landmark(8)))
+    else if (!firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen && handInRange && this->isThumbNearFirstFinger(landmarkList.landmark(4), landmarkList.landmark(8)))
     {
         recognized_hand_gesture = new std::string("OK");
         LOG(INFO) << "OK";
