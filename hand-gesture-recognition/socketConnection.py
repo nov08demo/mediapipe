@@ -17,26 +17,10 @@ sio.connect('http://summer-dev.us-east-1.elasticbeanstalk.com')
 
 
  
-handHover= False
+handHover = False
+fist = False
 
 while True:
-    # with open('../example.csv', newline='') as csvfile:
-    #     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-    #     for row in spamreader:
-    #         if(row[0] =="five"):
-    #             sio.emit("edge.hover")
-    #             print(row)
-    #             handHover=True
-    #             f = open("../example.csv", "w")
-    #             f.truncate()
-    #             f.close()
-    #             time.sleep(0.5)
-    #         else:
-    #             print(row)
-    #             if handHover:
-    #                 time.sleep(0.5)
-    #                 sio.emit("edge.handleave")
-    #                 handHover=False
 
     f = open("../example.csv", "r")
 
@@ -49,8 +33,42 @@ while True:
         f.truncate()
         f.close()
         time.sleep(1)
+    elif(f.read() =="one"):
+        f.close
+        sio.emit("edge.oneGesture")
+        print("--ONE--")
+        f = open("../example.csv", "w")
+        f.truncate()
+        f.close()
+        time.sleep(1)
+    elif(f.read() =="two"):
+        f.close
+        sio.emit("edge.twoGesture")
+        print("--TWO--")
+        f = open("../example.csv", "w")
+        f.truncate()
+        f.close()
+        time.sleep(1)
+    elif(f.read() =="three"):
+        f.close
+        sio.emit("edge.threeGesture")
+        print("--THREE--")
+        f = open("../example.csv", "w")
+        f.truncate()
+        f.close()
+        time.sleep(1)
+    elif(f.read() =="fist"):
+        f.close
+        sio.emit("edge.hover")
+        print("--FIST--")
+        fist = True
+        f = open("../example.csv", "w")
+        f.truncate()
+        f.close()
+        time.sleep(1)
     else:
-        if handHover:
+        if (handHover or fist):
             time.sleep(1)
             sio.emit("edge.handleave")
-            handHover=False
+            handHover = False
+            fist = False
